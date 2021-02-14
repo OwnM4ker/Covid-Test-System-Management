@@ -9,7 +9,7 @@ def create_connection(db_file):
     conn = None
     try:
         conn = sqlite3.connect(db_file)
-        print("SQL connection successful") 
+        # print("SQL connection successful") 
     except Error as e:
         print(f"SQL Error>: '{e}")
 
@@ -38,6 +38,8 @@ def add_record(conn, data):
     c.execute(query, data)
     conn.commit()
 
+    print(f"SQL: Record ADDED | serial_num = {data[0]}")
+
 
 def update_record(conn, data):
     """ Update an existing record with new data 'data'
@@ -54,10 +56,12 @@ def update_record(conn, data):
                     postcode_num = ?,
                     phone_num = ?,
                     note = ?
-                WHERE serial_num = ? """
+                WHERE id = ? """
     c = conn.cursor()
     c.execute(query, data)
     conn.commit()
+
+    print(f"SQL: Record UPDATED with id={data[-1]}")
 
 
 def delete_record(conn, id):
@@ -68,6 +72,8 @@ def delete_record(conn, id):
     c = conn.cursor()
     c.execute(query, (id,))
     conn.commit()
+
+    print(f"SQL: Record DELETED with id={id}")
 
 
 def delete_all_records(conn):
@@ -84,7 +90,7 @@ def load_all_records(conn):
     """ Return all data from table person
         with connection 'conn' """
     
-    query = "SELECT * FROM person"
+    query = "SELECT * FROM person ORDER BY serial_num ASC"
     c = conn.cursor()
     c.execute(query)
     
@@ -126,15 +132,19 @@ def get_last_record(conn):
 
 table_person = """ CREATE TABLE IF NOT EXISTS person (
                     id INTEGER PRIMARY KEY,
-                    serial_num CHARACTER(5) NOT NULL,
-                    fname CHARACTER(30) NOT NULL,
-                    lname CHARACTER(30) NOT NULL,
-                    birth_date CHARACTER(10) NOT NULL,
-                    identification_num CHARACTER(20) NOT NULL,
-                    street CHARACTER(30) NOT NULL,
-                    city CHARACTER(30) NOT NULL,
-                    postcode_num CHARACTER(5) NOT NULL,
-                    phone_num CHARACTER(10) NOT NULL,
+                    serial_num INTEGER NOT NULL,
+                    fname text NOT NULL,
+                    lname text NOT NULL,
+                    birth_date text NOT NULL,
+                    identification_num text NOT NULL,
+                    street text NOT NULL,
+                    city text NOT NULL,
+                    postcode_num text NOT NULL,
+                    phone_num text NOT NULL,
                     note text,
-                    date_created CHARACTER(22)
+                    date_created text NOT NULL
                 ); """
+
+
+# conn = create_connection("data/table.db")
+# create_table(conn, table_person)
